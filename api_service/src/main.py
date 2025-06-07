@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from src.models import Base
 from src.database import engine
+from src.posts.routes import router as posts_router
 
 
 @asynccontextmanager
@@ -15,9 +16,11 @@ async def lifespan(app: FastAPI):
     await engine.dispose()
 
 
-app = FastAPI()
+app = FastAPI(title="Posts API", lifespan=lifespan)
+
+app.include_router(posts_router)
 
 
 @app.get("/")
-async def start_message():
-    return {"message": "hello"}
+async def root():
+    return {"message": "Welcome to Posts API"}
