@@ -1,6 +1,6 @@
 annotated-types==0.7.0
 anyio==4.9.0
-asyncpg==0.29.0
+asyncpg
 certifi==2025.4.26
 click==8.2.1
 colorama==0.4.6

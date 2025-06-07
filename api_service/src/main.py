@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from api_service.src.models import Base
-from database import engine
+from src.models import Base
+from src.database import engine
 
 
 @asynccontextmanager
@@ -16,3 +16,8 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI()
+
+
+@app.get("/")
+async def start_message():
+    return {"message": "hello"}
