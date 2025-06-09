@@ -2,6 +2,43 @@
 
 Система управления постами с аутентификацией пользователей, состоящая из трех основных сервисов.
 
+## Установка и запуск
+
+
+### Настройка окружения
+
+1. Создайте файл `.env` в корневой директории:
+```env
+BOT_TOKEN=token
+DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/posts_db
+SECRET_KEY=your-secret-key-here
+ALGORITHM=HS256
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=posts_db
+API_URL=http://api:8000
+```
+
+### Запуск проекта
+
+Сборка и запуск контейнеров:
+```bash
+docker-compose up -d
+```
+
+### Доступ к сервисам
+
+- Frontend: http://localhost
+- API: http://localhost:8000
+- API Documentation: http://localhost:8000/docs
+
+### Как создавать посты
+
+- Зайдите на http://localhost
+- Введите тестовые email и пароль и нажмите "Зарегистрироваться"
+- Готово! Теперь вы можете создавать, изменять и удалять посты
+- Зайдите в Telegram bot и по /posts получите список всех постов
+
 ## Структура проекта
 
 ```
@@ -43,6 +80,7 @@ quantum_tesе_auth/
 ### Bot Service
 - Telegram бот для взаимодействия с системой
 - Интеграция с API сервисом
+- Aiogram в качестве библиотеки
 
 ## Технологический стек
 
@@ -66,39 +104,6 @@ quantum_tesе_auth/
 - Docker Compose
 - Nginx
 
-## Установка и запуск
-
-### Предварительные требования
-- Docker
-- Docker Compose
-
-### Настройка окружения
-
-1. Создайте файл `.env` в корневой директории:
-```env
-BOT_TOKEN=tg-bot-tocken
-DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/posts_db
-SECRET_KEY=your-secret-key-here
-ALGORITHM=HS256
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=posts_db
-API_URL=http://api:8000
-```
-
-### Запуск проекта
-
-Сборка и запуск контейнеров:
-```bash
-docker-compose up -d
-```
-
-
-### Доступ к сервисам
-
-- Frontend: http://localhost
-- API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
 
 ## API Endpoints
 
