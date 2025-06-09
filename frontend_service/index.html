@@ -98,6 +98,17 @@
             border-left: 4px solid var(--primary-color);
         }
 
+        .post p {
+            /* для современных браузеров */
+            overflow-wrap: break-word;
+            /* синоним для старых версий WebKit/Firefox */
+            word-wrap: break-word;
+            /* если хотите максимально агрессивный перенос */
+            word-break: break-all;
+            /* сохранить переносы строк из текста (если они есть) */
+            white-space: pre-wrap;
+        }
+
         .post-header {
             display: flex;
             justify-content: space-between;
@@ -197,7 +208,7 @@
     <div class="container">
         <div class="auth-container">
             <div id="authStatus" class="auth-status"></div>
-            <button onclick="showAuthModal()" id="authButton">Login</button>
+            <button onclick="showAuthModal()" id="authButton">Войти</button>
             <button onclick="logout()" id="logoutButton" style="display: none;">Выйти</button>
         </div>
 
