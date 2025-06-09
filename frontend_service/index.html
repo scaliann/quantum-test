@@ -373,6 +373,14 @@
             fetchPosts();
         }
 
+        // Escape special characters for JavaScript string
+        function escapeJsString(str) {
+            return str.replace(/[\\']/g, '\\$&')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r')
+                .replace(/\t/g, '\\t');
+        }
+
         // Fetch all posts
         async function fetchPosts() {
             try {
@@ -394,14 +402,16 @@
                 postElement.className = 'post';
 
                 const date = new Date(post.created_at).toLocaleString();
+                const escapedTitle = escapeJsString(post.title);
+                const escapedText = escapeJsString(post.text);
 
                 postElement.innerHTML = `
                     <div class="post-header">
                         <h3 class="post-title">${post.title}</h3>
                         <div class="post-actions">
                             ${authToken ? `
-                                <button class="edit-btn" onclick="showEditModal(${post.id}, '${post.title}', '${post.text}')">Edit</button>
-                                <button class="delete-btn" onclick="deletePost(${post.id})">Delete</button>
+                                <button class="edit-btn" onclick="showEditModal(${post.id}, '${escapedTitle}', '${escapedText}')">Редактировать</button>
+                                <button class="delete-btn" onclick="deletePost(${post.id})">Удалить</button>
                             ` : ''}
                         </div>
                     </div>
