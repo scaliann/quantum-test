@@ -7,7 +7,9 @@
 
 ### Настройка окружения
 
-1. Создайте файл `.env` в корневой директории:
+1. Склонируйте репозиторий командой: `git clone https://github.com/scaliann/quantum-test.git`
+
+2. Создайте файл `.env` в корневой директории:
 ```env
 BOT_TOKEN=token
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/posts_db
@@ -44,23 +46,35 @@ docker-compose up -d
 ## Структура проекта
 
 ```
-quantum_tesе_auth/
-├── api_service/         # FastAPI бэкенд сервис
+quantum_test/
+├── api_service/              # FastAPI бэкенд сервис
 │   ├── src/
-│   │   ├── posts/      # Модуль для работы с постами
-│   │   ├── users/      # Модуль аутентификации и пользователей
-│   │   ├── config.py   # Конфигурация приложения
-│   │   ├── database.py # Настройки базы данных
-│   │   └── main.py     # Точка входа FastAPI приложения
-│   ├── Dockerfile
+│   │   ├── posts/           # Модуль для работы с постами
+│   │   ├── users/           # Модуль аутентификации и пользователей
+│   │   ├── config.py        # Конфигурация приложения
+│   │   ├── database.py      # Настройки базы данных
+│   │   ├── models.py        # Глобальные модели для SQLA
+│   │   └── main.py          # Точка входа FastAPI приложения
+│   ├── Dockerfile           # Dockerfile для создания образа api_service
 │   └── requirements.txt
-├── frontend_service/    # Веб-интерфейс
-│   ├── index.html      # Главная страница
-│   ├── nginx.conf      # Конфигурация Nginx
-│   └── Dockerfile
-├── bot_service/        # Телеграм бот сервис для чтения постов
-├── docker-compose.yml  # docker-compose для управления всеми сервисами
-└── .env/           # Настройки всего проекта
+├── frontend_service/       # Веб-интерфейс
+│   ├── index.html          # Главная страница с SPA приложением
+│   ├── nginx.conf          # Конфигурация Nginx
+│   └── Dockerfile          # Dockerfile для создания образа frontend_service
+├── bot_service/            # Телеграм бот сервис
+│   ├── src/
+│   │   ├── api_client.py/          # Взаимодействие с API сервисом
+│   │   ├── config.py/              # Настройки сервиса
+│   │   ├── handlers.py/            # Управление логикой бота
+│   │   ├── keyboard_builder.py/    # Конфигурация кнопок
+│   │   ├── main.py/                # Точка входа бота
+│   │   ├── message_formatter.py    # Модуль для форматирования сообщений
+│   │   └── schemas.py              # Описание схем Pydantic
+│   ├── Dockerfile                  # Dockerfile для создания образа bot_service
+│   └── requirements.txt
+├── docker-compose.yml   # Docker Compose конфигурация для запуска всех сервисов
+├── .env                 # Переменные окружения
+└── README.md            # Документация проекта
 ```
 
 ## Сервисы
