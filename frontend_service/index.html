@@ -267,6 +267,7 @@
         const API_URL = 'http://localhost:8000';
         let currentEditId = null;
         let authToken = localStorage.getItem('authToken');
+        let userEmail = localStorage.getItem('userEmail');
 
         // Auth status update
         function updateAuthStatus() {
@@ -275,11 +276,11 @@
             const logoutButton = document.getElementById('logoutButton');
 
             if (authToken) {
-                authStatus.textContent = 'Authenticated';
+                authStatus.textContent = `Привет, ${userEmail}`;
                 authButton.style.display = 'none';
                 logoutButton.style.display = 'inline-block';
             } else {
-                authStatus.textContent = 'Not authenticated';
+                authStatus.textContent = 'Пользователь не авторизован';
                 authButton.style.display = 'inline-block';
                 logoutButton.style.display = 'none';
             }
@@ -293,6 +294,12 @@
         function closeAuthModal() {
             document.getElementById('authModal').style.display = 'none';
             document.getElementById('authError').textContent = '';
+        }
+
+        // Email validation function
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
 
         // Login
@@ -309,20 +316,35 @@
                     body: JSON.stringify({ email, password }),
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
-                    const data = await response.json();
                     authToken = data.access_token;
+                    userEmail = email;
                     localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('userEmail', email);
                     updateAuthStatus();
                     closeAuthModal();
                     fetchPosts();
                 } else {
-                    const error = await response.json();
-                    document.getElementById('authError').textContent = error.detail || 'Login failed';
+                    let errorMessage = '';
+                    if (typeof data === 'string') {
+                        errorMessage = data;
+                    } else if (data.detail && typeof data.detail === 'string') {
+                        errorMessage = data.detail;
+                    } else if (Array.isArray(data.detail)) {
+                        errorMessage = data.detail[0]?.msg || 'Ошибка валидации';
+                    } else if (typeof data.detail === 'object') {
+                        errorMessage = JSON.stringify(data.detail);
+                    } else {
+                        errorMessage = 'Произошла ошибка при входе';
+                    }
+
+                    document.getElementById('authError').textContent = errorMessage;
                 }
             } catch (error) {
                 console.error('Error during login:', error);
-                document.getElementById('authError').textContent = 'Error during login';
+                document.getElementById('authError').textContent = 'Ошибка сервера. Пожалуйста, попробуйте позже.';
             }
         }
 
@@ -340,15 +362,29 @@
                     body: JSON.stringify({ email, password }),
                 });
 
+                const data = await response.json();
+
                 if (response.ok) {
                     login(); // Automatically login after successful registration
                 } else {
-                    const error = await response.json();
-                    document.getElementById('authError').textContent = error.detail || 'Registration failed';
+                    let errorMessage = '';
+                    if (typeof data === 'string') {
+                        errorMessage = data;
+                    } else if (data.detail && typeof data.detail === 'string') {
+                        errorMessage = data.detail;
+                    } else if (Array.isArray(data.detail)) {
+                        errorMessage = data.detail[0]?.msg || 'Ошибка валидации';
+                    } else if (typeof data.detail === 'object') {
+                        errorMessage = JSON.stringify(data.detail);
+                    } else {
+                        errorMessage = 'Произошла ошибка при регистрации';
+                    }
+
+                    document.getElementById('authError').textContent = errorMessage;
                 }
             } catch (error) {
                 console.error('Error during registration:', error);
-                document.getElementById('authError').textContent = 'Error during registration';
+                document.getElementById('authError').textContent = 'Ошибка сервера. Пожалуйста, попробуйте позже.';
             }
         }
 
@@ -368,7 +404,9 @@
             }
 
             localStorage.removeItem('authToken');
+            localStorage.removeItem('userEmail');
             authToken = null;
+            userEmail = null;
             updateAuthStatus();
             fetchPosts();
         }
