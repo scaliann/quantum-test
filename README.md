@@ -17,10 +17,13 @@
 1. Склонируйте репозиторий командой: `git clone https://github.com/scaliann/quantum-test.git`
 
 2. Создайте файл `.env` в корневой директории:
+
+Для того, чтобы все запустилось, достаточно подставить BOT_TOKEN для Телеграм бота
+
 ```env
 BOT_TOKEN=token
 DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/posts_db
-SECRET_KEY=your-secret-key-here
+SECRET_KEY=super_secret_key
 ALGORITHM=HS256
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
