@@ -1,17 +1,22 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 
+from src.users.auth_utils import get_current_user
+
 from .schemas import Post, PostCreate, PostUpdate
 from .services import PostService
 from .dependencies import get_post_service
+from .permissions import require_auth
 
-router = APIRouter(prefix="/posts", tags=["posts"])
+router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
 @router.post("/", response_model=Post)
+@require_auth()
 async def create_post(
     post: PostCreate,
     post_service: PostService = Depends(get_post_service),
+    current_user=Depends(get_current_user),
 ) -> Post:
     return await post_service.create_post(post)
 
@@ -23,7 +28,7 @@ async def get_post(
 ) -> Post:
     post = await post_service.get_post(post_id)
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Пост не найден.")
     return post
 
 
@@ -35,6 +40,7 @@ async def get_posts(
 
 
 @router.put("/{post_id}", response_model=Post)
+@require_auth()
 async def update_post(
     post_id: int,
     post_data: PostUpdate,
@@ -42,16 +48,17 @@ async def update_post(
 ) -> Post:
     post = await post_service.update_post(post_id, post_data)
     if not post:
-        raise HTTPException(status_code=404, detail="Post not found")
+        raise HTTPException(status_code=404, detail="Пост не найден.")
     return post
 
 
 @router.delete("/{post_id}")
+@require_auth()
 async def delete_post(
     post_id: int,
     post_service: PostService = Depends(get_post_service),
 ) -> dict:
     deleted = await post_service.delete_post(post_id)
     if not deleted:
-        raise HTTPException(status_code=404, detail="Post not found")
-    return {"message": "Post deleted successfully"}
+        raise HTTPException(status_code=404, detail="Пост не найден.")
+    return {"message": "Пост успешно удален!"}

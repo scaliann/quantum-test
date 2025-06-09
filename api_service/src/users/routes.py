@@ -6,7 +6,7 @@ from src.users.auth_utils import get_current_user, get_user_service
 from src.users.schemas import UserAuth, UserCreate, UserRead, UserResponse
 from src.users.services import UserService
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["Users"])
 
 
 @router.post("/register", response_model=UserRead)
