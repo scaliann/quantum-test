@@ -1,14 +1,13 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.users.auth_utils import get_current_user
-
 from .schemas import Post, PostCreate, PostUpdate
 from .services import PostService
 from .dependencies import get_post_service
 from .permissions import require_auth
 
-router = APIRouter(prefix="/posts", tags=["Posts"])
+router = APIRouter(prefix="/posts", tags=["posts"])
 
 
 @router.post("/", response_model=Post)
@@ -28,7 +27,10 @@ async def get_post(
 ) -> Post:
     post = await post_service.get_post(post_id)
     if not post:
-        raise HTTPException(status_code=404, detail="Пост не найден.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пост не найден",
+        )
     return post
 
 
@@ -45,11 +47,15 @@ async def update_post(
     post_id: int,
     post_data: PostUpdate,
     post_service: PostService = Depends(get_post_service),
+    current_user=Depends(get_current_user),
 ) -> Post:
-    post = await post_service.update_post(post_id, post_data)
+    post = await post_service.get_post(post_id)
     if not post:
-        raise HTTPException(status_code=404, detail="Пост не найден.")
-    return post
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пост не найден",
+        )
+    return await post_service.update_post(post_id, post_data)
 
 
 @router.delete("/{post_id}")
@@ -57,8 +63,13 @@ async def update_post(
 async def delete_post(
     post_id: int,
     post_service: PostService = Depends(get_post_service),
+    current_user=Depends(get_current_user),
 ) -> dict:
-    deleted = await post_service.delete_post(post_id)
-    if not deleted:
-        raise HTTPException(status_code=404, detail="Пост не найден.")
-    return {"message": "Пост успешно удален!"}
+    post = await post_service.get_post(post_id)
+    if not post:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Пост не найден",
+        )
+    await post_service.delete_post(post_id)
+    return {"message": "Пост успешно удален"}

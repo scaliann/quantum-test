@@ -7,7 +7,7 @@ class MessageFormatter:
         formatted_date = post.created_at.strftime("%Y-%m-%d %H:%M:%S")
 
         return (
-            f"📝 *Заголовок: {post.title}*\n\n"
-            f"Текст: {post.text}\n\n"
-            f"📅 Время создания: {formatted_date}"
+            f"📌 *Заголовок: {post.title}*\n\n"
+            f"📝 Текст:\n\n {post.text}\n\n"
+            f"🕘 Время создания: {formatted_date}"
         )

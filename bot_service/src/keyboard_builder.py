@@ -8,6 +8,6 @@ class KeyboardBuilder:
     def build_posts_keyboard(posts: List[Post]) -> ReplyKeyboardMarkup:
         buttons = []
         for post in posts:
-            buttons.append([KeyboardButton(text=f"📝 {post.title} (ID: {post.id})")])
+            buttons.append([KeyboardButton(text=f"📝 {post.title}")])
 
         return ReplyKeyboardMarkup(keyboard=buttons, resize_keyboard=True, one_time_keyboard=True)
