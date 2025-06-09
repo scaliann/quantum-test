@@ -31,13 +31,15 @@ docker-compose up -d
 - Frontend: http://localhost
 - API: http://localhost:8000
 - API Documentation: http://localhost:8000/docs
+- Telegram bot: @quantumm_test_bot
 
-### Как создавать посты
+### Как управлять постами
 
 - Зайдите на http://localhost
 - Введите тестовые email и пароль и нажмите "Зарегистрироваться"
 - Готово! Теперь вы можете создавать, изменять и удалять посты
-- Зайдите в Telegram bot и по /posts получите список всех постов
+- Зайдите в Telegram bot @quantumm_test_bot
+- Чтобы получить весь список постов, воспользуйтесь командой /post
 
 ## Структура проекта
 

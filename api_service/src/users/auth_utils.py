@@ -20,10 +20,10 @@ async def get_current_user_id(
     request: Request,
     access_token: Optional[str] = Cookie(None),
 ) -> int:
-    # Try to get token from cookie
+    # Пытаемся получить токен
     token = access_token
 
-    # If no token in cookie, try to get from Authorization header
+    # Если нет токена, пытаемся получить из заголовка
     if not token:
         auth_header = request.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):

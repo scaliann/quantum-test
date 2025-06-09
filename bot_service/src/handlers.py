@@ -37,11 +37,11 @@ class PostHandlers:
         self,
         message: types.Message,
     ):
-        if not message.text.startswith("📝"):
+        if not message.text.startswith("Заголовок"):
             return
 
         try:
-            post_id = int(message.text.split("ID: ")[-1].strip(")"))
+            post_id = int(message.text.split("Номер поста: ")[-1].strip(")"))
             post = await self.api_client.get_post(post_id)
             formatted_message = self.message_formatter.format_post(post)
             await message.reply(formatted_message, parse_mode="Markdown")

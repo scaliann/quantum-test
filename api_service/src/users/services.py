@@ -6,6 +6,10 @@ from src.users.password import get_password_hash
 
 
 class UserService:
+    """
+    Сервис позволяет создавать и находить пользователя по email и id
+    """
+
     def __init__(self, session: AsyncSession):
         self.session = session
 

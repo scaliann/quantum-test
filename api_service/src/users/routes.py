@@ -9,7 +9,14 @@ from src.users.services import UserService
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/register", response_model=UserRead)
+@router.post(
+    "/register",
+    response_model=UserRead,
+    summary="Зарегистрироваться",
+    description="""
+Регистрация осуществляется путем ввода email и пароля.
+""",
+)
 async def register_user(
     user_data: UserCreate,
     user_service: UserService = Depends(get_user_service),
@@ -24,7 +31,13 @@ async def register_user(
     return user
 
 
-@router.post("/login/")
+@router.post(
+    "/login/",
+    summary="Войти в аккаунт",
+    description="""
+Вход осуществляется путем ввода email и пароля.
+""",
+)
 async def auth_user(
     response: Response,
     user_data: UserAuth,
@@ -48,7 +61,10 @@ async def auth_user(
     return {"access_token": access_token, "refresh_token": None}
 
 
-@router.post("/logout")
+@router.post(
+    "/logout",
+    summary="Выйти из аккаунта",
+)
 async def logout(
     response: Response,
     current_user=Depends(get_current_user),
