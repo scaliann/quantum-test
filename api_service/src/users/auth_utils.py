@@ -1,13 +1,34 @@
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Optional, Tuple
 
 from fastapi import Cookie, Depends, HTTPException, Request, status
 from jose import JWTError, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
+from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
 
 from src.config import settings
 from src.database import get_async_session
 from src.users.services import UserService
+
+
+def get_cookie_signer() -> URLSafeTimedSerializer:
+    return URLSafeTimedSerializer(settings.SECRET_KEY, salt="cookie-salt")
+
+
+def sign_data(data: str) -> str:
+    signer = get_cookie_signer()
+    return signer.dumps(data)
+
+
+def unsign_data(signed_data: str, max_age: int = 30 * 24 * 60 * 60) -> Tuple[str, bool]:
+    signer = get_cookie_signer()
+    try:
+        data = signer.loads(signed_data, max_age=max_age)
+        return data, True
+    except SignatureExpired:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Cookie истекла")
+    except BadSignature:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Невалидная cookie")
 
 
 async def get_user_service(
@@ -36,6 +57,10 @@ async def get_current_user_id(
         )
 
     try:
+        # Если токен из cookie, проверяем его подпись
+        if access_token:
+            token, _ = unsign_data(token)
+
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         user_id = int(payload.get("sub"))
         if user_id is None:

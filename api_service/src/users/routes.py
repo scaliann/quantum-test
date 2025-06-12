@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.users.auth import authenticate_user, create_access_token
-from src.users.auth_utils import get_current_user, get_user_service
+from src.users.auth_utils import get_current_user, get_user_service, sign_data, unsign_data
 from src.users.schemas import UserAuth, UserCreate, UserRead, UserResponse
 from src.users.services import UserService
 
@@ -51,12 +51,16 @@ async def auth_user(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Неверная почта или пароль"
         )
     access_token = create_access_token({"sub": str(user.id)})
+    # Подписываем cookie перед установкой
+    signed_token = sign_data(access_token)
     response.set_cookie(
         key="access_token",
-        value=access_token,
+        value=signed_token,
         httponly=True,
         secure=True,  # Только для HTTPS
-        samesite="lax",  # Защита от CSRF
+        samesite="strict",  # Усиленная защита от CSRF
+        max_age=30 * 24 * 60 * 60,  # 30 дней
+        path="/",  # Доступно только для корневого пути
     )
     return {"access_token": access_token, "refresh_token": None}
 
